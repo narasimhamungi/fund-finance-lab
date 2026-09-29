@@ -1,0 +1,6 @@
+scenario,borrowing_base,capacity,availability,mandatory_prepayment,uncalled_total,coverage,call_needed_pct_of_uncalled,largest_contributor,largest_contribution_share
+base,358.8,300,120,0.0,455.0,2.527778,0.395604,Public pension A,0.326087
+largest contributor excluded (Public pension A),241.8,241.8,61.8,0.0,455.0,2.527778,0.395604,Sovereign fund B,0.362903
+two largest contributors excluded,154.05,154.05,0.0,25.95,455.0,2.527778,0.395604,Public pension D,0.303797
+all designated investors excluded,292.5,292.5,112.5,0.0,455.0,2.527778,0.395604,Public pension A,0.4
+largest contributor defaults (Public pension A),241.8,241.8,61.8,0.0,325.0,1.805556,0.553846,Sovereign fund B,0.362903

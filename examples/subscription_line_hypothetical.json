@@ -1,0 +1,20 @@
+{
+  "label": "Hypothetical closed-end fund subscription line (illustrative inputs, not market terms)",
+  "units": "USD millions",
+  "facility": {
+    "facility_size": 300,
+    "outstanding": 180,
+    "advance_rates": {"included": 0.90, "designated": 0.60, "excluded": 0.0},
+    "investor_cap_pct": null
+  },
+  "investors": [
+    {"name": "Public pension A", "commitment": 200, "called_pct": 0.35, "category": "included"},
+    {"name": "Sovereign fund B", "commitment": 150, "called_pct": 0.35, "category": "included"},
+    {"name": "Insurer C", "commitment": 70, "called_pct": 0.35, "category": "included"},
+    {"name": "Public pension D", "commitment": 80, "called_pct": 0.35, "category": "included"},
+    {"name": "Endowment E", "commitment": 80, "called_pct": 0.35, "category": "designated"},
+    {"name": "Fund of funds F", "commitment": 50, "called_pct": 0.35, "category": "designated"},
+    {"name": "Family office G", "commitment": 40, "called_pct": 0.35, "category": "designated"},
+    {"name": "Wealth feeder H", "commitment": 30, "called_pct": 0.35, "category": "excluded"}
+  ]
+}

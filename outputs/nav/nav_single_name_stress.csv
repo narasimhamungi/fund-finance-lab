@@ -1,0 +1,4 @@
+assets_written_down,names,loss,nav,eligible_nav,excluded,ltv,status,cure_to_target,remaining_drawdown_to_breach
+1,Asset A,1.0,760.0,760.0,0.0,0.197368,ok,0.0,0.210526
+2,"Asset A, Asset B",1.0,610.0,610.0,0.0,0.245902,cash sweep,0.0,0.016393
+3,"Asset A, Asset B, Asset C",1.0,490.0,488.0,2.0,0.307377,breach,76.8,0.0
