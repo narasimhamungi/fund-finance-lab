@@ -58,3 +58,42 @@ def test_inconsistent_terms_are_rejected(kwargs):
     base = dict(loan=150, ltv_sweep=0.20, ltv_breach=0.25, ltv_target=0.15, single_asset_cap=0.20)
     with pytest.raises(ValueError):
         NavFacility(**{**base, **kwargs})
+
+
+COV = NavFacility(loan=150, ltv_sweep=0.20, ltv_breach=0.25, ltv_target=0.15, single_asset_cap=0.20,
+                  top_n=5, top_n_share=0.60, min_assets=10)
+
+
+def test_top_n_limit_excludes_the_excess_after_the_single_asset_cap():
+    elig, excl = eligible_nav(ASSETS, 0.20, top_n=5, top_n_share=0.60)
+    assert elig == pytest.approx(960 - (660 - 0.60 * 960))       # top five capped 660 vs limit 576
+    assert excl == pytest.approx(124)
+    s = summary(ASSETS, COV)
+    assert s["excluded_single_cap"] == pytest.approx(40) and s["excluded_top_n"] == pytest.approx(84)
+
+
+def test_breakeven_stays_exact_with_the_top_n_limit():
+    d = summary(ASSETS, COV)["drawdown_to_breach"]
+    assert uniform_stress(ASSETS, COV, [d])[0]["ltv"] == pytest.approx(0.25)
+
+
+def test_diversity_covenant_triggers_a_sweep_on_its_own():
+    few = ASSETS[:9]                                               # 9 assets, below the minimum of 10
+    f = NavFacility(loan=10, ltv_sweep=0.20, ltv_breach=0.25, ltv_target=0.15, single_asset_cap=0.20, min_assets=10)
+    row = uniform_stress(few, f, [0.0])[0]
+    assert row["ltv"] < 0.20 and row["status"] == "cash sweep" and row["sweep_reason"] == "diversity"
+
+
+def test_single_name_losses_with_covenants():
+    rows = single_name_stress(ASSETS, COV, loss=1.0, names=2)
+    assert [r["eligible_nav"] for r in rows] == pytest.approx([676, 516])
+    assert rows[0]["status"] == "cash sweep" and rows[0]["diversified"] is True       # 10 assets left
+    assert rows[1]["status"] == "breach" and rows[1]["diversified"] is False          # 9 assets left
+
+
+@pytest.mark.parametrize("kwargs", [dict(top_n=5), dict(top_n_share=0.6), dict(top_n=0, top_n_share=0.6),
+                                    dict(top_n=5, top_n_share=1.5), dict(min_assets=0)])
+def test_inconsistent_covenants_are_rejected(kwargs):
+    base = dict(loan=150, ltv_sweep=0.20, ltv_breach=0.25, ltv_target=0.15, single_asset_cap=0.20)
+    with pytest.raises(ValueError):
+        NavFacility(**{**base, **kwargs})

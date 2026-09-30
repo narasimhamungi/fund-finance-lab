@@ -1,0 +1,4 @@
+assets_written_down,names,loss,nav,eligible_nav,excluded,ltv,status,sweep_reason,diversified,cure_to_target,remaining_drawdown_to_breach
+1,Asset A,1.0,760.0,676.0,84.0,0.221893,cash sweep,LTV,True,0.0,0.112426
+2,"Asset A, Asset B",1.0,610.0,516.0,94.0,0.290698,breach,diversity,False,72.6,0.0
+3,"Asset A, Asset B, Asset C",1.0,490.0,382.8,107.2,0.39185,breach,diversity,False,92.58,0.0

@@ -47,11 +47,16 @@ def run_nav(cfg: dict, out: Path) -> Path:
     L = [f"# NAV facility stress: {cfg.get('label', 'unnamed')}", "", DISCLAIMER, "",
          f"Units: {units or 'as supplied'}", "",
          "## Position",
-         f"- Total NAV {_num(s['total_nav'])}; eligible NAV {_num(s['eligible_nav'])} after the {f.single_asset_cap:.0%} "
-         f"single-asset cap (excluded {_num(s['excluded'])}); largest asset {s['largest_asset']} at {_pct(s['largest_asset_share'])} of NAV",
+         f"- Total NAV {_num(s['total_nav'])}; eligible NAV {_num(s['eligible_nav'])} after concentration limits "
+         f"(excluded {_num(s['excluded_single_cap'])} by the {f.single_asset_cap:.0%} single-asset cap"
+         + (f", {_num(s['excluded_top_n'])} by the top-{f.top_n} limit" if f.top_n else "")
+         + f"); largest asset {s['largest_asset']} at {_pct(s['largest_asset_share'])} of NAV",
          f"- Loan {_num(f.loan)}; LTV {_pct(s['ltv'])} ({s['status']}); cash sweep at {_pct(f.ltv_sweep)}, "
          f"breach at {_pct(f.ltv_breach)}, cure target {_pct(f.ltv_target)}",
          f"- Uniform drawdown to reach the sweep level: {_pct(s['drawdown_to_sweep'])}; to reach breach: {_pct(s['drawdown_to_breach'])}",
+         *( [f"- Concentration limit: the {f.top_n} largest assets count for at most {f.top_n_share:.0%} of eligible NAV"]
+            if f.top_n else [] ),
+         *( [f"- Diversity covenant: fewer than {f.min_assets} assets with value triggers a cash sweep"] if f.min_assets else [] ),
          "", "## Uniform drawdowns (`nav_uniform_stress.csv`)",
          "| Drawdown | Eligible NAV | LTV | Status | Cure to target |", "|---|---|---|---|---|"]
     for r in uni:
@@ -60,10 +65,15 @@ def run_nav(cfg: dict, out: Path) -> Path:
           "", f"## Largest assets written down by {cfg.get('single_name_loss', 1.0):.0%} (`nav_single_name_stress.csv`)",
           "| Assets | Names | Eligible NAV | LTV | Status | Further uniform drawdown to breach |", "|---|---|---|---|---|---|"]
     for r in names:
-        L.append(f"| {r['assets_written_down']} | {r['names']} | {_num(r['eligible_nav'])} | {_pct(r['ltv'])} | {r['status']} | "
+        st = r["status"]
+        if st == "cash sweep" and r["sweep_reason"]:
+            st = f"cash sweep ({r['sweep_reason']})"
+        elif st == "breach" and not r["diversified"]:
+            st = "breach (diversity also failed)"
+        L.append(f"| {r['assets_written_down']} | {r['names']} | {_num(r['eligible_nav'])} | {_pct(r['ltv'])} | {st} | "
                  f"{_pct(r['remaining_drawdown_to_breach'])} |")
-    L += ["", "Limits: see docs/limitations.md. The concentration cap is measured against pre-exclusion NAV; "
-          "valuation lag, FX and cross-default terms are not modelled."]
+    L += ["", "Limits: see docs/limitations.md. Each concentration limit is measured against the aggregate before it "
+          "is applied; valuation lag, FX and cross-default terms are not modelled."]
     (out / "nav_summary.md").write_text("\n".join(L) + "\n", encoding="utf-8")
     return out
 

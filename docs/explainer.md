@@ -87,15 +87,21 @@ These are directional. Real facilities differ in ways the models do not yet capt
 
 | Real-facility feature | This repo |
 |---|---|
-| Top-N concentration limits (e.g. ten largest ≤55% of eligible NAV) [16] | One single-asset cap, measured before exclusions |
-| Minimum-diversity covenant, with a cash sweep on breach [3][16] | Not modelled |
+| Top-N concentration limits (e.g. ten largest ≤55% of eligible NAV) [16] | Single-asset cap plus an optional top-N limit |
+| Minimum-diversity covenant, with a cash sweep on breach [3][16] | Optional minimum number of assets; a failure triggers a cash sweep |
 | Haircuts by asset type, sector or jurisdiction [8] | Not modelled |
 | Uneven, correlated asset declines | Uniform drawdowns plus largest-asset losses |
 | Affiliated investors aggregated for concentration [12] | Each investor separate |
 | Hurdle mechanics that add investors over time [5] | Static investor list |
 
-**Next model upgrade:** a top-N concentration limit and a diversity covenant. Those are the terms most likely to
-bind in a stress, and the filed Blackstone agreement shows how they are drafted.
+**What the covenants change.** The same hypothetical facility with a top-five limit of 60% of eligible NAV and a
+minimum of ten assets (`examples/nav_facility_covenants_hypothetical.json`):
+- It starts at 17.1% LTV instead of 15.6%.
+- It reaches breach after a 31.5% uniform fall instead of 37.5%.
+- Losing the single largest asset now puts it in the cash sweep.
+- Losing the two largest breaches both the LTV covenant and the diversity covenant.
+
+Concentration terms, not the headline LTV, decide how much stress a facility can take.
 
 ## Questions an analyst asks
 

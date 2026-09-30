@@ -6,10 +6,12 @@ Notation: NAV_i = value of asset i; N = Σ NAV_i; L = loan outstanding.
 
 | Quantity | Formula | Note |
 |---|---|---|
-| Eligible NAV | E = Σ min(NAV_i, c × N) | c = single-asset cap; N measured before exclusions |
+| Eligible NAV after single-asset cap | E₁ = Σ min(NAV_i, c × N) | c = single-asset cap; N measured before exclusions |
+| Top-N limit (optional) | E = E₁ − max(0, T_N − s × E₁) | T_N = sum of the N largest capped values; s = top-N share; measured against E₁ |
 | LTV | L / E | |
-| Status | breach if LTV ≥ breach level; cash sweep if LTV ≥ sweep level; else ok | levels are inputs |
-| Uniform drawdown to level ℓ | d* = max(0, 1 − L / (ℓ × E)) | exact: a uniform drawdown scales every NAV_i and N, so E scales by (1 − d) |
+| Status | breach if LTV ≥ breach level; cash sweep if LTV ≥ sweep level or the diversity covenant fails; else ok | levels are inputs |
+| Diversity covenant (optional) | fails if the number of assets with value < minimum | a failure triggers a cash sweep |
+| Uniform drawdown to level ℓ | d* = max(0, 1 − L / (ℓ × E)) | exact: a uniform drawdown scales every NAV_i, N, the cap and the top-N limit, so E scales by (1 − d) |
 | Cure to target t | max(0, L − t × E) | paydown (or equity used to repay) that restores LTV = t |
 | Single-name stress | write down the k largest assets by loss x, recompute N and E | the cap is recomputed on the smaller portfolio |
 

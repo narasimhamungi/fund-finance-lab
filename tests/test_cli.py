@@ -24,3 +24,9 @@ def test_bad_config_returns_error(tmp_path):
     bad.write_text(json.dumps({"facility": {"loan": 1, "ltv_sweep": 0.3, "ltv_breach": 0.2, "ltv_target": 0.1,
                                             "single_asset_cap": 0.2}, "assets": [{"name": "A", "nav": 1}]}))
     assert main(["nav", "--config", str(bad), "--out", str(tmp_path / "o")]) == 2
+
+
+def test_covenant_example_reports_limits(tmp_path):
+    assert main(["nav", "--config", str(EXAMPLES / "nav_facility_covenants_hypothetical.json"), "--out", str(tmp_path)]) == 0
+    summary = (tmp_path / "nav_summary.md").read_text(encoding="utf-8")
+    assert "84.0 by the top-5 limit" in summary and "breach (diversity also failed)" in summary

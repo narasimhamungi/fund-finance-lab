@@ -3,8 +3,9 @@
 - **Hypothetical inputs.** The example facilities, portfolios and investor lists are invented for illustration.
   No figure in `examples/` or `outputs/` describes a real fund, lender or market standard.
 - **Not a rating or credit opinion**, and not any rating agency's methodology.
-- **NAV facility simplifications.** One concentration test (a single-asset cap measured against pre-exclusion NAV);
-  no sector, geography or vintage limits; no valuation lag between reported and realisable NAV; no FX; interest,
+- **NAV facility simplifications.** Concentration is a single-asset cap plus an optional top-N limit, each measured
+  against the aggregate before it is applied; the diversity covenant counts assets only; no sector, geography or
+  vintage limits and no haircuts; no valuation lag between reported and realisable NAV; no FX; interest,
   PIK and fees are not accrued; the cash sweep is shown as a status, not simulated over time; cure periods and
   cross-default terms are not modelled.
 - **Subscription line simplifications.** The per-investor cap is applied once, against the uncapped borrowing base;

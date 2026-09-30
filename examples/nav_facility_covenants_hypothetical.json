@@ -1,0 +1,15 @@
+{
+  "label": "Hypothetical buyout fund NAV facility with concentration and diversity covenants (illustrative inputs, not market terms)",
+  "units": "USD millions",
+  "facility": {"loan": 150, "ltv_sweep": 0.20, "ltv_breach": 0.25, "ltv_target": 0.15, "single_asset_cap": 0.20,
+               "top_n": 5, "top_n_share": 0.60, "min_assets": 10},
+  "assets": [
+    {"name": "Asset A", "nav": 240}, {"name": "Asset B", "nav": 150}, {"name": "Asset C", "nav": 120},
+    {"name": "Asset D", "nav": 100}, {"name": "Asset E", "nav": 90}, {"name": "Asset F", "nav": 80},
+    {"name": "Asset G", "nav": 70}, {"name": "Asset H", "nav": 60}, {"name": "Asset I", "nav": 40},
+    {"name": "Asset J", "nav": 30}, {"name": "Asset K", "nav": 20}
+  ],
+  "drawdowns": [0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50],
+  "single_name_loss": 1.0,
+  "single_names": 3
+}

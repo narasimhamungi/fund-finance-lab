@@ -5,7 +5,7 @@
 Units: USD millions
 
 ## Position
-- Total NAV 1,000.0; eligible NAV 960.0 after the 20% single-asset cap (excluded 40.0); largest asset Asset A at 24.0% of NAV
+- Total NAV 1,000.0; eligible NAV 960.0 after concentration limits (excluded 40.0 by the 20% single-asset cap); largest asset Asset A at 24.0% of NAV
 - Loan 150.0; LTV 15.6% (ok); cash sweep at 20.0%, breach at 25.0%, cure target 15.0%
 - Uniform drawdown to reach the sweep level: 21.9%; to reach breach: 37.5%
 
@@ -30,7 +30,7 @@ First grid point in breach: 40.0%.
 | Assets | Names | Eligible NAV | LTV | Status | Further uniform drawdown to breach |
 |---|---|---|---|---|---|
 | 1 | Asset A | 760.0 | 19.7% | ok | 21.1% |
-| 2 | Asset A, Asset B | 610.0 | 24.6% | cash sweep | 1.6% |
+| 2 | Asset A, Asset B | 610.0 | 24.6% | cash sweep (LTV) | 1.6% |
 | 3 | Asset A, Asset B, Asset C | 488.0 | 30.7% | breach | 0.0% |
 
-Limits: see docs/limitations.md. The concentration cap is measured against pre-exclusion NAV; valuation lag, FX and cross-default terms are not modelled.
+Limits: see docs/limitations.md. Each concentration limit is measured against the aggregate before it is applied; valuation lag, FX and cross-default terms are not modelled.
