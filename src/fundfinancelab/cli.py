@@ -1,4 +1,5 @@
-"""fund-finance-lab nav|subline --config FILE.json --out DIR
+"""fund-finance-lab nav|subline|coverage --config FILE.json --out DIR
+   fund-finance-lab regression-cases | verify-log --log FILE.csv
 
 Reads a JSON input file (see examples/), runs the stress and writes CSVs plus a summary.
 Inputs are the user's; the example files are hypothetical, not market terms.
@@ -11,6 +12,7 @@ import json
 from pathlib import Path
 
 from . import nav_facility as nf
+from . import regression as reg
 from . import subscription_line as sl
 
 DISCLAIMER = ("*Hypothetical inputs for illustration. Not observed market terms, not advice, and not any "
@@ -156,7 +158,24 @@ def main(argv: list[str] | None = None) -> int:
         s = sub.add_parser(name, help=helptext)
         s.add_argument("--config", required=True, help="JSON input file (see examples/)")
         s.add_argument("--out", default=f"outputs/{name}", help="output directory")
+    s = sub.add_parser("regression-cases", help="write workbook regression cases with Python-expected outputs")
+    s.add_argument("--examples", default="examples", help="folder holding the shipped NAV configs")
+    s.add_argument("--out", default="excel/regression/cases.csv", help="CSV to write")
+    s.add_argument("--random", type=int, default=36, help="number of seeded random cases")
+    s.add_argument("--seed", type=int, default=reg.SEED)
+    s = sub.add_parser("verify-log", help="check a spreadsheet run's log against the regression cases")
+    s.add_argument("--cases", default="excel/regression/cases.csv")
+    s.add_argument("--log", required=True, help="log written by the VBA harness or the LibreOffice runner")
     args = p.parse_args(argv)
+    if args.cmd == "regression-cases":
+        cases = reg.all_cases(Path(args.examples), args.random, args.seed)
+        reg.write_cases(Path(args.out), cases)
+        print(f"{len(cases)} regression cases written to {args.out}")
+        return 0
+    if args.cmd == "verify-log":
+        result = reg.verify_log(Path(args.cases), Path(args.log))
+        print(reg.report_text(result, args.log), end="")
+        return 0 if result["passed"] else 1
     cfg = json.loads(Path(args.config).read_text(encoding="utf-8"))
     try:
         out = {"nav": run_nav, "subline": run_subline, "coverage": run_coverage}[args.cmd](cfg, Path(args.out))

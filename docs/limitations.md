@@ -16,3 +16,6 @@
   tests are not modelled.
 - **Uniform drawdowns** move every asset by the same percentage; real stresses are uneven, which is why the
   largest-asset loss scenarios are shown alongside.
+- **Workbook verification.** The 48-case regression suite has been evaluated in LibreOffice 24.2, not Excel; the
+  Excel run is the VBA harness, which is specified but not built. The random cases are generated to exercise the
+  formulas and are not observed facilities.

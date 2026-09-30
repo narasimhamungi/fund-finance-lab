@@ -203,7 +203,12 @@ checks = [
     ("No negative NAVs", f'=COUNTIF(Inputs!C{FIRST}:C{LAST},"<0")=0'),
     ("Eligible NAV <= total NAV", "=Calc!C42<=Calc!C38"),
     ("Capped ranks are 1..20 with no ties", f"=AND(SUM(Calc!F{FIRST}:F{LAST})=210,MIN(Calc!F{FIRST}:F{LAST})=1,MAX(Calc!F{FIRST}:F{LAST})=20)"),
-    ("LTV at the breakeven drawdown equals the breach level", "=ABS(Inputs!C5/(Calc!C42*(1-Calc!C49))-Inputs!C7)<0.000000001"),
+    # Drawdown to breach is floored at 0 (already in breach) and is 100% only when the loan is 0; the identity is
+    # checked only in between. Found by the regression cases (excel/regression): the unguarded version failed for
+    # every portfolio already in breach and returned #DIV/0! for a zero loan.
+    ("LTV at the breakeven drawdown equals the breach level (or LTV is already at or above it)",
+     "=IF(Calc!C49>=1,Inputs!C5=0,IF(Calc!C49>0,ABS(Inputs!C5/(Calc!C42*(1-Calc!C49))-Inputs!C7)<0.000000001,"
+     "Calc!C44>=Inputs!C7))"),
     ("Top-N exclusion is not negative", "=Calc!C41>=0"),
 ]
 for i, (label, formula) in enumerate(checks):
