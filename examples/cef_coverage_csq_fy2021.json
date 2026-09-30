@@ -1,0 +1,7 @@
+{
+  "label": "Calamos Strategic Total Return Fund (CSQ), fiscal year ended 31 October 2021",
+  "source": "Form N-CSR/A for FY2021, financial highlights: net assets to common $2,928,463k, notes payable $880,000k, MRPS at redemption value $304,000k; reported coverage $4,673 per $1,000 of loan and $338 per $25 MRPS (https://www.sec.gov/Archives/edgar/data/1275214/000110465922068612/tm2217714d3_ncsra.htm)",
+  "units": "USD thousands",
+  "leverage": {"net_assets_common": 2928463, "debt": 880000, "preferred": 304000},
+  "tests": {"debt_min": 3.0, "total_min": 2.0, "contractual_total_min": 2.25}
+}

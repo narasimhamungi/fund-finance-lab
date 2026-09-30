@@ -15,6 +15,18 @@ Notation: NAV_i = value of asset i; N = Σ NAV_i; L = loan outstanding.
 | Cure to target t | max(0, L − t × E) | paydown (or equity used to repay) that restores LTV = t |
 | Single-name stress | write down the k largest assets by loss x, recompute N and E | the cap is recomputed on the smaller portfolio |
 
+## Closed-end fund asset coverage
+
+| Quantity | Formula | Note |
+|---|---|---|
+| Coverage assets | A = net assets to common + debt + preferred | total assets less liabilities not represented by senior securities |
+| Debt coverage | A / D | statutory minimum 300% |
+| Total coverage | A / (D + P) | statutory preferred test, minimum 200%; contractual tests (e.g. 225%) are inputs |
+| Per-$25 convention | A / P × 25 | as funds report it; not the statutory test |
+| Fall in A to level ℓ | 1 − ℓ × S / A | S = D + P (or D for the debt test) |
+| Cure by repaying senior securities | R = (ℓ × S − A) / (ℓ − 1) | repaying R lowers A and S together |
+| Common distribution capacity | A − max(3 × D, t × S) | t = binding total-coverage level |
+
 ## Subscription line
 
 | Quantity | Formula | Note |

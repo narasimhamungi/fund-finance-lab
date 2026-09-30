@@ -30,3 +30,10 @@ def test_covenant_example_reports_limits(tmp_path):
     assert main(["nav", "--config", str(EXAMPLES / "nav_facility_covenants_hypothetical.json"), "--out", str(tmp_path)]) == 0
     summary = (tmp_path / "nav_summary.md").read_text(encoding="utf-8")
     assert "84.0 by the top-5 limit" in summary and "breach (diversity also failed)" in summary
+
+
+def test_coverage_cli_reproduces_reported_figures(tmp_path):
+    assert main(["coverage", "--config", str(EXAMPLES / "cef_coverage_csq_fy2021.json"), "--out", str(tmp_path)]) == 0
+    summary = (tmp_path / "coverage_summary.md").read_text(encoding="utf-8")
+    assert "| Reported-style coverage per $1,000 of debt | 4,673.3 |" in summary
+    assert "| Total coverage, debt + preferred (statutory minimum 200%) | 347.3% |" in summary

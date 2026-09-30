@@ -11,5 +11,8 @@
 - **Subscription line simplifications.** The per-investor cap is applied once, against the uncapped borrowing base;
   exclusion events are treated as immediate; capital-call timing, investor credit quality and the fund's
   ability to call again after a shortfall are not modelled.
+- **Asset coverage.** Coverage assets are derived from net assets plus senior securities; temporary borrowings,
+  rule 18f-4 treatment of derivatives and reverse repurchase agreements, and rating-agency overcollateralisation
+  tests are not modelled.
 - **Uniform drawdowns** move every asset by the same percentage; real stresses are uneven, which is why the
   largest-asset loss scenarios are shown alongside.

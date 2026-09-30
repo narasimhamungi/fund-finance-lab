@@ -107,17 +107,59 @@ def run_subline(cfg: dict, out: Path) -> Path:
     return out
 
 
+def run_coverage(cfg: dict, out: Path) -> Path:
+    from . import asset_coverage as ac
+    lv = ac.Leverage(**cfg["leverage"])
+    tests = cfg.get("tests", {"debt_min": 3.0, "total_min": 2.0, "contractual_total_min": None})
+    contractual = tests.get("contractual_total_min")
+    units = cfg.get("units", "")
+    rows = [
+        {"measure": "Coverage assets (net assets + debt + preferred)", "value": lv.coverage_assets},
+        {"measure": "Debt coverage (statutory minimum 300%)", "value": ac.debt_coverage(lv)},
+        {"measure": "Total coverage, debt + preferred (statutory minimum 200%)", "value": ac.total_coverage(lv)},
+        {"measure": "Reported-style coverage per $1,000 of debt", "value": None if not lv.debt else ac.debt_coverage(lv) * 1000},
+        {"measure": "Reported-style coverage per $25 preferred (A / preferred x 25)", "value": ac.per_share_convention(lv)},
+        {"measure": "Fall in coverage assets to 300% debt coverage", "value": ac.decline_to(lv, tests["debt_min"], "debt")},
+        {"measure": "Fall in coverage assets to 200% total coverage", "value": ac.decline_to(lv, tests["total_min"], "total")},
+    ]
+    if contractual:
+        rows.append({"measure": f"Fall in coverage assets to {contractual:.0%} contractual total coverage",
+                     "value": ac.decline_to(lv, contractual, "total")})
+    rows.append({"measure": "Common distribution capacity under the binding test",
+                 "value": ac.distribution_capacity(lv, tests["debt_min"], max(tests["total_min"], contractual or 0))})
+    out.mkdir(parents=True, exist_ok=True)
+    _write_csv(out / "coverage.csv", rows)
+    L = [f"# Asset coverage: {cfg.get('label', 'unnamed')}", "", f"Source: {cfg.get('source', 'as supplied')}",
+         f"Units: {units or 'as supplied'}", "", "| Measure | Value |", "|---|---|"]
+    for r in rows:
+        v = r["value"]
+        if v is None:
+            txt = "n/a"
+        elif "coverage (" in r["measure"] or r["measure"].startswith(("Debt coverage", "Total coverage")):
+            txt = f"{v:.1%}"
+        elif r["measure"].startswith("Fall"):
+            txt = f"{v:.1%}"
+        else:
+            txt = f"{v:,.1f}"
+        L.append(f"| {r['measure']} | {txt} |")
+    L += ["", "The per-$25 preferred figure divides by the preferred amount alone; it is not the statutory preferred "
+          "test, which divides by debt plus preferred. See docs/cef_coverage_memo.md."]
+    (out / "coverage_summary.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="fund-finance-lab")
     sub = p.add_subparsers(dest="cmd", required=True)
-    for name, helptext in (("nav", "NAV facility LTV stress"), ("subline", "subscription line borrowing-base stress")):
+    for name, helptext in (("nav", "NAV facility LTV stress"), ("subline", "subscription line borrowing-base stress"),
+                           ("coverage", "closed-end fund asset coverage (section 18)")):
         s = sub.add_parser(name, help=helptext)
         s.add_argument("--config", required=True, help="JSON input file (see examples/)")
         s.add_argument("--out", default=f"outputs/{name}", help="output directory")
     args = p.parse_args(argv)
     cfg = json.loads(Path(args.config).read_text(encoding="utf-8"))
     try:
-        out = (run_nav if args.cmd == "nav" else run_subline)(cfg, Path(args.out))
+        out = {"nav": run_nav, "subline": run_subline, "coverage": run_coverage}[args.cmd](cfg, Path(args.out))
     except (KeyError, TypeError, ValueError) as e:
         print(f"error in {args.config}: {e}")
         return 2

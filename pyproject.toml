@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fund-finance-lab"
-version = "0.2.0"
+version = "0.3.0"
 description = "Stress models for fund finance facilities: NAV loans and subscription lines (hypothetical inputs)"
 requires-python = ">=3.10"
 dependencies = []
