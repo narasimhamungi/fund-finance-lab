@@ -16,7 +16,7 @@ Stress models for the two main fund-finance facilities: **NAV loans**, secured o
 - [x] Subscription line: borrowing base by investor category, availability, mandatory prepayment, uncalled-capital
       coverage, exclusion and default scenarios
 - [x] Unit tests and CI
-- [ ] Explainer: subscription lines vs NAV loans (collateral, advance rates, covenants), with sources (pending)
+- [x] Explainer: subscription lines vs NAV loans (collateral, advance rates, covenants), with sources: [`docs/explainer.md`](docs/explainer.md)
 - [ ] Excel workbook reproducing the NAV model with formulas, an input sheet and checks (pending)
 - [ ] Legal-document memo: leveraged closed-end fund asset-coverage tests (pending)
 
@@ -40,5 +40,6 @@ example file and change the inputs; the units are whatever you enter.
 | `src/fundfinancelab/subscription_line.py` | Subscription line: borrowing base, availability, coverage, investor scenarios |
 | `src/fundfinancelab/cli.py` | Command line and summaries |
 | `examples/` | Hypothetical inputs |
+| `docs/explainer.md` | Subscription lines vs NAV loans: collateral, sizing, covenants, how agencies look at them, and where these models are simpler |
 | `docs/model_spec.md` | Every formula the models use |
 | `docs/limitations.md` | What the models leave out |
