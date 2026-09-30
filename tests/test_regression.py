@@ -27,11 +27,27 @@ def _perfect_log(path: Path, rows) -> None:
                 w.writerow([r["case_id"], f, r[f"exp_{f}"], "TRUE"])
 
 
+def assert_same_cases(new, old):
+    """Numbers compared to 1e-12 relative, not as text: Python 3.12 made sum() of floats compensated, so
+    3.10/3.11 differ from the committed file (generated on 3.12) in the last digit. Text fields must match exactly."""
+    assert [r["case_id"] for r in new] == [r["case_id"] for r in old]
+    for a, b in zip(new, old):
+        assert a.keys() == b.keys()
+        for k in a:
+            try:
+                x, y = float(a[k]), float(b[k])
+            except ValueError:
+                assert a[k] == b[k], (a["case_id"], k)
+            else:
+                assert x == pytest.approx(y, rel=1e-12, abs=1e-12), (a["case_id"], k)
+
+
 def test_committed_cases_match_a_fresh_generation(tmp_path):
     # Fails if the model or the generator changed without regenerating excel/regression/cases.csv.
+    # Parsed, so Git line-ending conversion is harmless.
     fresh = tmp_path / "cases.csv"
     reg.write_cases(fresh, reg.all_cases(EXAMPLES))
-    assert reg.read_cases(fresh) == reg.read_cases(CASES)        # parsed, so Git line-ending conversion is harmless
+    assert_same_cases(reg.read_cases(fresh), reg.read_cases(CASES))
 
 
 def test_generation_is_deterministic():
@@ -135,7 +151,7 @@ def test_cell_map_points_at_the_labelled_cells():
 def test_cli_writes_cases_and_verifies_logs(tmp_path, rows, capsys):
     out = tmp_path / "cases.csv"
     assert main(["regression-cases", "--examples", str(EXAMPLES), "--out", str(out)]) == 0
-    assert reg.read_cases(out) == reg.read_cases(CASES)
+    assert_same_cases(reg.read_cases(out), reg.read_cases(CASES))
     assert main(["verify-log", "--cases", str(CASES), "--log", str(LO_LOG)]) == 0
     bad = tmp_path / "bad.csv"
     bad.write_text("case_id,field,actual,macro_pass\n", encoding="utf-8")
